@@ -13,6 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @Data
 public class EstudiantesEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -20,9 +21,7 @@ public class EstudiantesEntity {
     @Column(nullable = false, unique = true)
     private String email;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name="estudiante_id")
-    private List<MatriculasEntity> matriculas;
+
 
 
 

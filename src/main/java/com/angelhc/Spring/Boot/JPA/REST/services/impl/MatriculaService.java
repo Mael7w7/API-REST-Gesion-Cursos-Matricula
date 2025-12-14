@@ -1,5 +1,7 @@
 package com.angelhc.Spring.Boot.JPA.REST.services.impl;
 
+import com.angelhc.Spring.Boot.JPA.REST.dto.CursoRequest;
+import com.angelhc.Spring.Boot.JPA.REST.dto.CursoResponse;
 import com.angelhc.Spring.Boot.JPA.REST.dto.MatriculaRequest;
 import com.angelhc.Spring.Boot.JPA.REST.dto.MatriculaResponse;
 import com.angelhc.Spring.Boot.JPA.REST.entity.CursoEntity;
@@ -11,6 +13,9 @@ import com.angelhc.Spring.Boot.JPA.REST.repository.MatriculaRepository;
 import com.angelhc.Spring.Boot.JPA.REST.services.IMatriculaService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -29,16 +34,55 @@ public class MatriculaService implements IMatriculaService {
                 .orElseThrow(() -> new RuntimeException("Estudiante id not found"));
 
         MatriculasEntity  matriculasEntity = new MatriculasEntity();
-        matriculasEntity.setIdCurso(cursoEntity.getId());
-        matriculasEntity.setIdEstudiante(estudiantes.getId());
+        matriculasEntity.setCurso(cursoEntity);
+        matriculasEntity.setEstudiante(estudiantes);
 
-        var tar = matriculaRepository.save(matriculasEntity);
+            var tar = matriculaRepository.save(matriculasEntity);
+
+
 
         return MatriculaResponse.builder()
                 .id(tar.getId())
                 .fechaMatricula(tar.getFechaMatricula())
-                .cursoId(tar.getIdCurso())
-                .estudianteId(tar.getIdEstudiante())
+                .cursoId(tar.getCurso().getId())
+                .estudianteId(tar.getEstudiante().getId())
                 .build();
     }
+    @Override
+    public List<CursoResponse> listarCursosEstudiante(Long idEstudiante) {
+        return matriculaRepository.findByEstudiante_Id(idEstudiante)
+                .stream()
+                .map(r->{
+                    CursoEntity cursoEntity = r.getCurso();
+                    return CursoResponse.builder()
+                            .id(cursoEntity.getId())
+                            .descripcion(cursoEntity.getDescripcion())
+                            .activo(cursoEntity.getActivo())
+                            .nombreCurso(cursoEntity.getNombreCurso())
+                            .build();
+
+                })
+                .collect(Collectors.toList());
+    }
+
+
+    @Override
+    public CursoResponse updateCurso(Long id) {
+        CursoEntity curso = cursoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Curso id not found"));
+
+        curso.setActivo(false);
+        var tar = cursoRepository.save(curso);
+
+
+        return CursoResponse.builder()
+                .id(tar.getId())
+                .nombreCurso(tar.getNombreCurso())
+                .activo(tar.getActivo())
+                .descripcion(tar.getDescripcion())
+                .build();
+
+    }
+
+
 }

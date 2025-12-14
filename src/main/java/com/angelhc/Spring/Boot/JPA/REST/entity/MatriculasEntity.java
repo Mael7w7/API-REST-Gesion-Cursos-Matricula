@@ -19,8 +19,15 @@ public class MatriculasEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long idCurso;
-    private Long idEstudiante;
     @CreationTimestamp
     private LocalDate fechaMatricula;
+
+    @ManyToOne
+    @JoinColumn(name = "id_curso")
+    private CursoEntity curso;
+
+    @ManyToOne
+    @JoinColumn(name = "id_estudiante")
+    private EstudiantesEntity estudiante;
 }
+
