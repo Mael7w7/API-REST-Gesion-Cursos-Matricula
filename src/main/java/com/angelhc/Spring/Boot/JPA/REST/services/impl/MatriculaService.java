@@ -1,12 +1,13 @@
 package com.angelhc.Spring.Boot.JPA.REST.services.impl;
 
-import com.angelhc.Spring.Boot.JPA.REST.dto.CursoRequest;
 import com.angelhc.Spring.Boot.JPA.REST.dto.CursoResponse;
 import com.angelhc.Spring.Boot.JPA.REST.dto.MatriculaRequest;
 import com.angelhc.Spring.Boot.JPA.REST.dto.MatriculaResponse;
 import com.angelhc.Spring.Boot.JPA.REST.entity.CursoEntity;
 import com.angelhc.Spring.Boot.JPA.REST.entity.EstudiantesEntity;
 import com.angelhc.Spring.Boot.JPA.REST.entity.MatriculasEntity;
+import com.angelhc.Spring.Boot.JPA.REST.mapper.CursoMapper;
+import com.angelhc.Spring.Boot.JPA.REST.mapper.MatriculaMapper;
 import com.angelhc.Spring.Boot.JPA.REST.repository.CursoRepository;
 import com.angelhc.Spring.Boot.JPA.REST.repository.EstudianteRepository;
 import com.angelhc.Spring.Boot.JPA.REST.repository.MatriculaRepository;
@@ -37,29 +38,20 @@ public class MatriculaService implements IMatriculaService {
         matriculasEntity.setCurso(cursoEntity);
         matriculasEntity.setEstudiante(estudiantes);
 
-            var tar = matriculaRepository.save(matriculasEntity);
+        var tar = matriculaRepository.save(matriculasEntity);
 
 
 
-        return MatriculaResponse.builder()
-                .id(tar.getId())
-                .fechaMatricula(tar.getFechaMatricula())
-                .cursoId(tar.getCurso().getId())
-                .estudianteId(tar.getEstudiante().getId())
-                .build();
+        return MatriculaMapper.toResponseMatricula(tar);
     }
+
     @Override
     public List<CursoResponse> listarCursosEstudiante(Long idEstudiante) {
         return matriculaRepository.findByEstudiante_Id(idEstudiante)
                 .stream()
                 .map(r->{
                     CursoEntity cursoEntity = r.getCurso();
-                    return CursoResponse.builder()
-                            .id(cursoEntity.getId())
-                            .descripcion(cursoEntity.getDescripcion())
-                            .activo(cursoEntity.getActivo())
-                            .nombreCurso(cursoEntity.getNombreCurso())
-                            .build();
+                    return CursoMapper.toResponseCurso(cursoEntity);
 
                 })
                 .collect(Collectors.toList());
@@ -74,13 +66,7 @@ public class MatriculaService implements IMatriculaService {
         curso.setActivo(false);
         var tar = cursoRepository.save(curso);
 
-
-        return CursoResponse.builder()
-                .id(tar.getId())
-                .nombreCurso(tar.getNombreCurso())
-                .activo(tar.getActivo())
-                .descripcion(tar.getDescripcion())
-                .build();
+        return CursoMapper.toResponseCurso(tar);
 
     }
 

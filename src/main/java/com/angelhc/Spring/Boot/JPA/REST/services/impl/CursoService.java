@@ -3,6 +3,7 @@ package com.angelhc.Spring.Boot.JPA.REST.services.impl;
 import com.angelhc.Spring.Boot.JPA.REST.dto.CursoRequest;
 import com.angelhc.Spring.Boot.JPA.REST.dto.CursoResponse;
 import com.angelhc.Spring.Boot.JPA.REST.entity.CursoEntity;
+import com.angelhc.Spring.Boot.JPA.REST.mapper.CursoMapper;
 import com.angelhc.Spring.Boot.JPA.REST.repository.CursoRepository;
 import com.angelhc.Spring.Boot.JPA.REST.services.ICursoService;
 import lombok.AllArgsConstructor;
@@ -21,12 +22,7 @@ public class CursoService implements ICursoService {
         cursoEntity.setDescripcion(cursoRequest.getDescripcion());
         var tar = repository.save(cursoEntity);
 
-        return CursoResponse.builder()
-                .id(tar.getId())
-                .nombreCurso(tar.getNombreCurso())
-                .activo(tar.getActivo())
-                .descripcion(tar.getDescripcion())
-                .build();
+        return CursoMapper.toResponseCurso(tar);
 
     }
 }
