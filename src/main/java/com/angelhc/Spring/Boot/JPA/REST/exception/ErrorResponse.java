@@ -1,0 +1,23 @@
+package com.angelhc.Spring.Boot.JPA.REST.exception;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.http.HttpStatus;
+
+import java.time.LocalDateTime;
+
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
+public class ErrorResponse {
+
+    private String message;
+    private int status;
+    private LocalDateTime timestamp;
+
+    public ErrorResponse(String message, int status) {
+        this.message = message;
+        this.status = status;
+    }
+}

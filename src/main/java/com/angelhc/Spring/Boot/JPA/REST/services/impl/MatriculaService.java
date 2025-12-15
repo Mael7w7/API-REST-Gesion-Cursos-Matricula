@@ -6,6 +6,7 @@ import com.angelhc.Spring.Boot.JPA.REST.dto.MatriculaResponse;
 import com.angelhc.Spring.Boot.JPA.REST.entity.CursoEntity;
 import com.angelhc.Spring.Boot.JPA.REST.entity.EstudiantesEntity;
 import com.angelhc.Spring.Boot.JPA.REST.entity.MatriculasEntity;
+import com.angelhc.Spring.Boot.JPA.REST.exception.ResourceNotFoundException;
 import com.angelhc.Spring.Boot.JPA.REST.mapper.CursoMapper;
 import com.angelhc.Spring.Boot.JPA.REST.mapper.MatriculaMapper;
 import com.angelhc.Spring.Boot.JPA.REST.repository.CursoRepository;
@@ -29,17 +30,16 @@ public class MatriculaService implements IMatriculaService {
     @Override
     public MatriculaResponse saveMatricula(MatriculaRequest matriculaRequest) {
         CursoEntity cursoEntity = cursoRepository.findById(matriculaRequest.getCursoId())
-                .orElseThrow(() -> new RuntimeException("Curso id not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Curso id not found"));
 
         EstudiantesEntity estudiantes = estudianteRepository.findById(matriculaRequest.getEstudianteId())
-                .orElseThrow(() -> new RuntimeException("Estudiante id not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Estudiante id not found"));
 
         MatriculasEntity  matriculasEntity = new MatriculasEntity();
         matriculasEntity.setCurso(cursoEntity);
         matriculasEntity.setEstudiante(estudiantes);
 
         var tar = matriculaRepository.save(matriculasEntity);
-
 
 
         return MatriculaMapper.toResponseMatricula(tar);
@@ -61,11 +61,10 @@ public class MatriculaService implements IMatriculaService {
     @Override
     public CursoResponse updateCurso(Long id) {
         CursoEntity curso = cursoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Curso id not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Curso id not found"));
 
         curso.setActivo(false);
         var tar = cursoRepository.save(curso);
-
         return CursoMapper.toResponseCurso(tar);
 
     }
